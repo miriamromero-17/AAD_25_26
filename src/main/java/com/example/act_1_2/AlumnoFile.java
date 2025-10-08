@@ -59,6 +59,22 @@ public class AlumnoFile implements AutoCloseable {
         return new Alumno(id, sb.toString().trim(), nota);
     }
 
+    // Actualiza la nota de un alumno sin reescribir el registro completo.
+    public void updateNota(int index, double nuevaNota) throws IOException {
+        // Calcula la posición exacta donde está la nota dentro del registro
+        long posNota = posOfIndex(index) + OFFSET_NOTA;
+
+        // Comprueba que el índice es válido
+        if (posNota + Double.BYTES > raf.length())
+            throw new IndexOutOfBoundsException("Índice fuera de rango");
+
+        // Mueve el puntero a esa posición
+        raf.seek(posNota);
+
+        // Escribe la nueva nota (sobrescribe solo esos 8 bytes)
+        raf.writeDouble(nuevaNota);
+    }
+
 
     @Override
     public void close() throws IOException {
