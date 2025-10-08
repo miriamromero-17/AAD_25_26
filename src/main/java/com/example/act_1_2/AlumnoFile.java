@@ -41,6 +41,25 @@ public class AlumnoFile implements AutoCloseable {
         raf.writeDouble(a.getNota());
     }
 
+    public Alumno readByIndex(int index) throws IOException {
+        long pos = posOfIndex(index);
+        if (pos + Alumno.RECORD_SIZE > raf.length())
+            throw new IndexOutOfBoundsException("Índice fuera de rango");
+
+        raf.seek(pos);
+
+        int id = raf.readInt();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < Alumno.NAME_LEN; i++) {
+            sb.append(raf.readChar());
+        }
+
+        double nota = raf.readDouble();
+        return new Alumno(id, sb.toString().trim(), nota);
+    }
+
+
     @Override
     public void close() throws IOException {
         raf.close();
