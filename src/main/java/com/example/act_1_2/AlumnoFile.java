@@ -6,79 +6,34 @@ import java.io.RandomAccessFile;
 public class AlumnoFile implements AutoCloseable {
     private final RandomAccessFile raf;
 
-    // Posiciones dentro del registro (offsets)
-    public static final int OFFSET_ID = 0; // 4 bytes
-    public static final int OFFSET_NOMBRE = Integer.BYTES; // 4
-    public static final int OFFSET_NOTA = OFFSET_NOMBRE + (Character.BYTES * Alumno.NAME_LEN); // 44
-
-    public AlumnoFile(String path) throws IOException {
-        this.raf = new RandomAccessFile(path, "rw");
+    public AlumnoFile(String nombre) throws IOException {
+        raf = new RandomAccessFile(nombre, "rw");
     }
 
-    // Calcula la posición del registro según su índice
-    private long posOfIndex(int index) {
-        return (long) index * Alumno.RECORD_SIZE;
+    public void addAlumno(Alumno nuevo) throws IOException {
+        raf.seek(raf.length());
+        nuevo.write(raf);
     }
 
-    //Añade un nuevo alumno al final del fichero (acceso secuencial).
-    public void append(Alumno a) throws IOException {
-        raf.seek(raf.length()); // ir al final
-        writeAtCurrent(a);
-    }
-
-    //Devuelve el número total de registros almacenados.
-    public int size() throws IOException {
-        return (int) (raf.length() / Alumno.RECORD_SIZE);
-    }
-
-    // Escribe un alumno en la posición actual del puntero.
-    private void writeAtCurrent(Alumno a) throws IOException {
-        raf.writeInt(a.getId());
-        String fixed = Alumno.fixNombre(a.getNombre());
-        for (int i = 0; i < Alumno.NAME_LEN; i++) {
-            raf.writeChar(fixed.charAt(i));
-        }
-        raf.writeDouble(a.getNota());
-    }
-
-    public Alumno readByIndex(int index) throws IOException {
-        long pos = posOfIndex(index);
-        if (pos + Alumno.RECORD_SIZE > raf.length())
-            throw new IndexOutOfBoundsException("Índice fuera de rango");
-
+    public Alumno leerAlumno(int index) throws IOException {
+        long pos = (long) index * Alumno.RECORD_SIZE;
+        if (pos >= raf.length()) return null;
         raf.seek(pos);
-
-        int id = raf.readInt();
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Alumno.NAME_LEN; i++) {
-            sb.append(raf.readChar());
-        }
-
-        double nota = raf.readDouble();
-        return new Alumno(id, sb.toString().trim(), nota);
+        return Alumno.read(raf);
     }
 
-    // Actualiza la nota de un alumno sin reescribir el registro completo.
-    public void updateNota(int index, double nuevaNota) throws IOException {
-        // Calcula la posición exacta donde está la nota dentro del registro
-        long posNota = posOfIndex(index) + OFFSET_NOTA;
-
-        // Comprueba que el índice es válido
-        if (posNota + Double.BYTES > raf.length())
-            throw new IndexOutOfBoundsException("Índice fuera de rango");
-
-        // Mueve el puntero a esa posición
-        raf.seek(posNota);
-
-        // Escribe la nueva nota (sobrescribe solo esos 8 bytes)
+    public void modificarNota(int index, double nuevaNota) throws IOException {
+        long pos = (long) index * Alumno.RECORD_SIZE + 4 + 2 * Alumno.NAME_LEN;
+        raf.seek(pos);
         raf.writeDouble(nuevaNota);
     }
 
+    public int contar() throws IOException {
+        return (int) (raf.length() / Alumno.RECORD_SIZE);
+    }
 
     @Override
     public void close() throws IOException {
         raf.close();
     }
 }
-
