@@ -1,9 +1,14 @@
+package com.example.add;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
 
 public class Act_1 {
 
@@ -200,7 +205,11 @@ public class Act_1 {
             long totalBytes = Files.list(dirActual)
                     .filter(Files::isRegularFile)
                     .mapToLong(p -> {
-                        try { return Files.size(p); } catch (IOException e) { return 0L; }
+                        try {
+                            return Files.size(p);
+                        } catch (IOException e) {
+                            return 0L;
+                        }
                     }).sum();
             System.out.println("Espacio total ocupado en ficheros del directorio: " + totalBytes + " bytes");
         } catch (IOException e) {
