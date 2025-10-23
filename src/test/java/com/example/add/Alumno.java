@@ -1,5 +1,8 @@
-package com.example.add;
+package main.java.com.example.add;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Alumno {
     private int id;
     private String nombre;
