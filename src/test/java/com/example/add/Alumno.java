@@ -1,8 +1,5 @@
-package main.java.com.example.add;
+package com.example.add;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class Alumno {
     private int id;
     private String nombre;
@@ -15,6 +12,11 @@ public class Alumno {
         this.id = id;
         this.nombre = nombre;
         this.nota = nota;
+    }
+
+    @Override
+    public String toString() {
+        return "Alumno: " + nombre + ", Nota: " + nota;
     }
 
     public int getId() {
