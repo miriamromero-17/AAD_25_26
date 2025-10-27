@@ -1,4 +1,4 @@
-package com.example.add;
+package com.example.add.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -9,13 +9,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AddApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AddApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(AddApplication.class, args);
 
-	}
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		log.info("Hola Mundo");
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        log.info("Hola Mundo");
+    }
 }
