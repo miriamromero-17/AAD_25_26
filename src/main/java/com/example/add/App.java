@@ -1,5 +1,6 @@
 package com.example.add;
 
+import com.example.add.model.LogManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
