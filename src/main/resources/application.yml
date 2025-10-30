@@ -1,1 +1,6 @@
-spring.application.name=add
+spring:
+  datasource:
+  url: jdbc:postgresql://localhost:5433/aad_db
+  username: user
+  password: pass
+  driver-class-name: org.postgresql.Driver
