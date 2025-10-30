@@ -1,4 +1,4 @@
-package com.example.add;
+package com.example.add.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

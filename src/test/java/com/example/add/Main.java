@@ -1,5 +1,7 @@
 package com.example.add;
 
+import com.example.add.model.Alumno;
+import com.example.add.model.Alumnos;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;

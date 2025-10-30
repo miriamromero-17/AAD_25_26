@@ -1,4 +1,4 @@
-package com.example.add;
+package com.example.add.model;
 
 public class Alumno {
     private int id;
