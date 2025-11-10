@@ -1,5 +1,6 @@
 package com.example.add;
 
+import com.example.add.config.PostgresqlDriver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

@@ -1,4 +1,4 @@
-package com.example.add;
+package com.example.add.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
