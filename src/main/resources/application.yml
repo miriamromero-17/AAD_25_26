@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/aad_db
+    username: user
+    password: pass
+    driver-class-name: org.postgresql.Driver
+
+    #Para forzar a Spring a cargar únicamente el .yml ignorando el application.properties
+    config:
+      import: "classpath:application.yml"
+
