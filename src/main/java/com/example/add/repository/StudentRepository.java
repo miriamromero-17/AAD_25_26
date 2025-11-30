@@ -15,7 +15,6 @@ import java.util.List;
 public class StudentRepository {
 
     private final JdbcTemplate jdbcTemplate;
-
     private final RowMapper<Student> rowMapper = (rs, rowNum) ->
             new Student(
                     rs.getInt("id_alumno"),

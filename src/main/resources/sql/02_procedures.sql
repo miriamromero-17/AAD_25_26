@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION count_enrollments(student_id INT)
 RETURNS INT
 LANGUAGE plpgsql
-AS $body$
+AS $func$
 DECLARE
     total INT;
 BEGIN
@@ -12,4 +12,4 @@ BEGIN
 
     RETURN total;
 END;
-$body$;
+$func$;
