@@ -8,4 +8,3 @@ spring:
     #Para forzar a Spring a cargar únicamente el .yml ignorando el application.properties
     config:
       import: "classpath:application.yml"
-
