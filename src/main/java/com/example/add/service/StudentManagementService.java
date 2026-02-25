@@ -1,6 +1,7 @@
-package com.example.add.application;
+package com.example.add.service;
 
 import com.example.add.model.Enrollment;
+import com.example.add.model.EnrollmentId;
 import com.example.add.model.Module;
 import com.example.add.model.Student;
 import com.example.add.repository.EnrollmentRepository;
@@ -8,7 +9,6 @@ import com.example.add.repository.ModuleRepository;
 import com.example.add.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@Repository
 @RequiredArgsConstructor
 @Slf4j
 public class StudentManagementService {
@@ -26,75 +25,84 @@ public class StudentManagementService {
     private final EnrollmentRepository enrollmentRepository;
 
     // -------------------------------------
-    // CREATE STUDENT (validaciones simples)
+    // CREAR ESTUDIANTE (validaciones simples)
     // -------------------------------------
     public Student createStudent(Student student) {
 
         if (student.getNif() == null || student.getNif().isBlank())
-            throw new IllegalArgumentException("NIF is required");
+            throw new IllegalArgumentException("El NIF es obligatorio");
 
         if (student.getName() == null || student.getName().isBlank())
-            throw new IllegalArgumentException("Name is required");
+            throw new IllegalArgumentException("El nombre es obligatorio");
 
         if (student.getEmail() == null || student.getEmail().isBlank())
-            throw new IllegalArgumentException("Email is required");
+            throw new IllegalArgumentException("El email es obligatorio");
+
 
         // evitar duplicados
-        Student existing = studentRepository.findByNif(student.getNif());
+        Student existing = studentRepository.findByNif(student.getNif()).orElse(null);
         if (existing != null) return existing;
 
-        return studentRepository.insert(student);
+
+        return studentRepository.save(student);
     }
 
     // -------------------------------------
-    // CREATE MODULE (validaciones)
+    // CREAR MODULO (validaciones)
     // -------------------------------------
     public Module createModule(Module module) {
 
         if (module.getCode() == null || module.getCode().isBlank())
-            throw new IllegalArgumentException("Code is required");
+            throw new IllegalArgumentException("El código es obligatorio");
 
         if (module.getName() == null || module.getName().isBlank())
-            throw new IllegalArgumentException("Name is required");
+            throw new IllegalArgumentException("El nombre es obligatorio");
 
         if (module.getHours() == null || module.getHours() <= 0)
-            throw new IllegalArgumentException("Hours must be > 0");
+            throw new IllegalArgumentException("Las horas deben ser mayores que 0");
+
 
         // evitar duplicados
-        Module existing = moduleRepository.findByCode(module.getCode());
+        Module existing = moduleRepository.findByCode(module.getCode()).orElse(null);
         if (existing != null) return existing;
 
-        return moduleRepository.insert(module);
+
+        return moduleRepository.save(module);
     }
 
     // -------------------------------------
-    // ENROLL STUDENT IN MODULE
-    // Declarative Transaction
+    // MATRICULAR ESTUDIANTE EN MÓDULO
+    // Transacción declarativa (@Transactional)
     // -------------------------------------
 
     @Transactional
     public Enrollment enrollStudentInModule(Integer studentId, Integer moduleId) {
 
-        Student student = studentRepository.findById(studentId);
-        if (student == null)
-            throw new IllegalArgumentException("Student does not exist");
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no existe"));
 
-        Module module = moduleRepository.findById(moduleId);
-        if (module == null)
-            throw new IllegalArgumentException("Module does not exist");
+        Module module = moduleRepository.findById(moduleId)
+                .orElseThrow(() -> new IllegalArgumentException("Módulo no existe"));
 
-        Enrollment e = new Enrollment(
-                null,
-                studentId,
-                moduleId,
-                LocalDate.now()
-        );
+        EnrollmentId id = new EnrollmentId(studentId, moduleId);
 
-        return enrollmentRepository.insert(e);
+        if (enrollmentRepository.existsById(id)) {
+            throw new IllegalArgumentException("Ya está matriculado en ese módulo");
+        }
+
+        Enrollment e = new Enrollment();
+        e.setId(id);
+        e.setStudent(student);
+        e.setModule(module);
+        e.setDate(LocalDate.now());
+        e.setFinalGrade(null);
+
+        return enrollmentRepository.save(e);
     }
 
+
     // -------------------------------------
-    // LIST METHODS
+    // LISTA DE  METODOS
     // -------------------------------------
     public List<Student> listStudents() {
         return studentRepository.findAll();
@@ -109,6 +117,10 @@ public class StudentManagementService {
     }
 
     public int countEnrollments(int studentId) {
-        return enrollmentRepository.countEnrollments(studentId);
+        return (int) enrollmentRepository.countByIdStudentId(studentId);
+    }
+
+    public Double avgGradeByModule(Integer moduleId) {
+        return null;
     }
 }
