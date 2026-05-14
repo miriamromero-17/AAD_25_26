@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: aad_db_container_act_5_1
+    restart: always
+    environment:
+      POSTGRES_DB: aad_act_5_1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data_act_5_1:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongo:
+    image: mongo:7
+    container_name: mongo_messages_container_act_5_1
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_act_5_1:/data/db
+
+volumes:
+  postgres_data_act_5_1:
+  mongo_data_act_5_1:

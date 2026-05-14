@@ -1,0 +1,2 @@
+### Ver estado antes de sincronizar
+GET http://localhost:8080/sync/status
